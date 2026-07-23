@@ -1,0 +1,42 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /api/v1/
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/book_tribe_feedback
+    username: username
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:9090/realms/book-social-network"
+
+springdoc:
+  default-produces-media-type: application/json
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      bookService:
+        register-health-indicator: true
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+  timelimiter:
+    instances:
+      bookService:
+        timeout-duration: 3s
