@@ -1,11 +1,8 @@
-package dev.pioruocco.book.feedback;
+package dev.pioruocco.feedback.feedback;
 
-import dev.pioruocco.book.book.Book;
-import dev.pioruocco.book.common.BaseEntity;
+import dev.pioruocco.feedback.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +20,6 @@ public class Feedback extends BaseEntity {
     @Column
     private Double note;
     private String comment;
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @Column(name = "book_id", nullable = false)
+    private Integer bookId;
 }

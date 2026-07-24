@@ -1,4 +1,4 @@
-package dev.pioruocco.book.feedback;
+package dev.pioruocco.feedback.feedback;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

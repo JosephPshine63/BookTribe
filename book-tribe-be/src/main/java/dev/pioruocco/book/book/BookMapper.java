@@ -1,11 +1,17 @@
 package dev.pioruocco.book.book;
 
+import dev.pioruocco.book.client.FeedbackClient;
 import dev.pioruocco.book.file.FileUtils;
 import dev.pioruocco.book.history.BookTransactionHistory;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class BookMapper {
+
+    private final FeedbackClient feedbackClient;
+
     public Book toBook(BookRequest request) {
         return Book.builder()
                 .id(request.id())
@@ -25,10 +31,11 @@ public class BookMapper {
                 .authorName(book.getAuthorName())
                 .isbn(book.getIsbn())
                 .synopsis(book.getSynopsis())
-                .rate(book.getRate())
+                .rate(feedbackClient.findAverageRatingByBook(book.getId()))
                 .archived(book.isArchived())
                 .shareable(book.isShareable())
                 // .owner(book.getOwner().fullName())
+                .createdBy(book.getCreatedBy())
                 .cover(FileUtils.readFileFromLocation(book.getBookCover()))
                 .build();
     }
@@ -39,7 +46,7 @@ public class BookMapper {
                 .title(history.getBook().getTitle())
                 .authorName(history.getBook().getAuthorName())
                 .isbn(history.getBook().getIsbn())
-                .rate(history.getBook().getRate())
+                .rate(feedbackClient.findAverageRatingByBook(history.getBook().getId()))
                 .returned(history.isReturned())
                 .returnApproved(history.isReturnApproved())
                 .build();

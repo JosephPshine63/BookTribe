@@ -19,6 +19,7 @@ public class BookResponse {
     private String isbn;
     private String synopsis;
     private String owner;
+    private String createdBy;
     private byte[] cover;
     private double rate;
     private boolean archived;
