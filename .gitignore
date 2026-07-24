@@ -3,4 +3,11 @@
 *.iws
 *.iml
 *.ipr
-.uploads
+
+### Runtime uploads (per-service, holds env-specific media — see uploads/README.md) ###
+uploads/*
+!uploads/README.md
+book-tribe-be/uploads/*
+!book-tribe-be/uploads/README.md
+feedback-service/uploads/*
+!feedback-service/uploads/README.md
