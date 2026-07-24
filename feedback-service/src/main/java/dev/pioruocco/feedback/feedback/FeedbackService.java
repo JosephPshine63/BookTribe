@@ -1,11 +1,9 @@
-package dev.pioruocco.book.feedback;
+package dev.pioruocco.feedback.feedback;
 
-import dev.pioruocco.book.book.Book;
-import dev.pioruocco.book.book.BookRepository;
-import dev.pioruocco.book.common.PageResponse;
-import dev.pioruocco.book.exception.OperationNotPermittedException;
-import dev.pioruocco.book.user.User;
-import jakarta.persistence.EntityNotFoundException;
+import dev.pioruocco.feedback.client.BookClient;
+import dev.pioruocco.feedback.client.BookResponse;
+import dev.pioruocco.feedback.common.PageResponse;
+import dev.pioruocco.feedback.exception.OperationNotPermittedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,16 +20,14 @@ import java.util.Objects;
 public class FeedbackService {
 
     private final FeedBackRepository feedBackRepository;
-    private final BookRepository bookRepository;
+    private final BookClient bookClient;
     private final FeedbackMapper feedbackMapper;
 
     public Integer save(FeedbackRequest request, Authentication connectedUser) {
-        Book book = bookRepository.findById(request.bookId())
-                .orElseThrow(() -> new EntityNotFoundException("No book found with ID:: " + request.bookId()));
+        BookResponse book = bookClient.findById(request.bookId());
         if (book.isArchived() || !book.isShareable()) {
             throw new OperationNotPermittedException("You cannot give a feedback for and archived or not shareable book");
         }
-        // User user = ((User) connectedUser.getPrincipal());
         if (Objects.equals(book.getCreatedBy(), connectedUser.getName())) {
             throw new OperationNotPermittedException("You cannot give feedback to your own book");
         }
@@ -42,10 +38,9 @@ public class FeedbackService {
     @Transactional
     public PageResponse<FeedbackResponse> findAllFeedbacksByBook(Integer bookId, int page, int size, Authentication connectedUser) {
         Pageable pageable = PageRequest.of(page, size);
-        User user = ((User) connectedUser.getPrincipal());
         Page<Feedback> feedbacks = feedBackRepository.findAllByBookId(bookId, pageable);
         List<FeedbackResponse> feedbackResponses = feedbacks.stream()
-                .map(f -> feedbackMapper.toFeedbackResponse(f, user.getId()))
+                .map(f -> feedbackMapper.toFeedbackResponse(f, connectedUser.getName()))
                 .toList();
         return new PageResponse<>(
                 feedbackResponses,
@@ -56,6 +51,17 @@ public class FeedbackService {
                 feedbacks.isFirst(),
                 feedbacks.isLast()
         );
+    }
 
+    public Double findAverageRatingByBook(Integer bookId) {
+        List<Feedback> feedbacks = feedBackRepository.findAllByBookId(bookId);
+        if (feedbacks.isEmpty()) {
+            return 0.0;
+        }
+        double rate = feedbacks.stream()
+                .mapToDouble(Feedback::getNote)
+                .average()
+                .orElse(0.0);
+        return Math.round(rate * 10.0) / 10.0;
     }
 }

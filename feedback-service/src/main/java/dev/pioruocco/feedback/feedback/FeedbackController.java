@@ -1,6 +1,6 @@
-package dev.pioruocco.book.feedback;
+package dev.pioruocco.feedback.feedback;
 
-import dev.pioruocco.book.common.PageResponse;
+import dev.pioruocco.feedback.common.PageResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +38,12 @@ public class FeedbackController {
             Authentication connectedUser
     ) {
         return ResponseEntity.ok(service.findAllFeedbacksByBook(bookId, page, size, connectedUser));
+    }
+
+    @GetMapping("/book/{book-id}/average-rating")
+    public ResponseEntity<Double> findAverageRatingByBook(
+            @PathVariable("book-id") Integer bookId
+    ) {
+        return ResponseEntity.ok(service.findAverageRatingByBook(bookId));
     }
 }

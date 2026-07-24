@@ -26,6 +26,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: "http://localhost:9090/realms/book-social-network"
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
 
 springdoc:
   default-produces-media-type: application/json
@@ -35,5 +39,16 @@ application:
     uploads:
       photos-output-path: ./uploads
 
-feedback-service:
-  url: http://feedback-service
+resilience4j:
+  circuitbreaker:
+    instances:
+      feedbackService:
+        register-health-indicator: true
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+  timelimiter:
+    instances:
+      feedbackService:
+        timeout-duration: 3s

@@ -1,4 +1,4 @@
-package dev.pioruocco.book.feedback;
+package dev.pioruocco.feedback.feedback;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
