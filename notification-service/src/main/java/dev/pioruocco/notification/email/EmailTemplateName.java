@@ -1,4 +1,4 @@
-package dev.pioruocco.book.email;
+package dev.pioruocco.notification.email;
 
 import lombok.Getter;
 
