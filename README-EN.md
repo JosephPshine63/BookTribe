@@ -6,7 +6,7 @@
 ![Keycloak](https://img.shields.io/badge/Keycloak-24.0.2-orange)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-A full-stack book-sharing social network where users can lend, borrow, and review books — built as a portfolio project covering a production-grade Spring Boot + Angular + Keycloak architecture.
+A full-stack book-sharing social network where users can lend, borrow, and review books — built as a portfolio project covering a Spring Cloud microservice architecture with Angular and Keycloak.
 
 ## Features
 
@@ -22,6 +22,7 @@ A full-stack book-sharing social network where users can lend, borrow, and revie
 | Layer | Technology |
 |---|---|
 | Backend | Spring Boot 3.2.2 · Java 17 · Spring Security OAuth2 Resource Server |
+| Microservices | Spring Cloud Config · Eureka · Spring Cloud Gateway · OpenFeign · Resilience4j |
 | Database | PostgreSQL · JPA / Hibernate (`ddl-auto: update`) |
 | Auth | Keycloak 24.0.2 — realm `book-social-network`, client `bsn` |
 | Mail (dev) | MailDev |
@@ -30,9 +31,22 @@ A full-stack book-sharing social network where users can lend, borrow, and revie
 
 ## Architecture
 
-The backend is a single Spring Boot application (`/api/v1/`) structured around three domain modules — **Book**, **Feedback**, and **History** — each with its own controller → service → repository stack. A `BaseEntity` superclass provides JPA auditing fields on every entity. All authentication is handled externally by Keycloak; the backend validates JWTs as an OAuth2 resource server and maps Keycloak roles to Spring Security authorities via `KeycloakJwtAuthenticationConverter`.
+BookTribe is a set of Spring Boot 3.2.2 microservices built on Spring Cloud. Every service registers with Eureka and loads its configuration from the Config Server; the Angular frontend talks only to the gateway.
 
-The Angular frontend consumes the backend through a fully generated API client (`ng-openapi-gen`) that is regenerated from the OpenAPI spec whenever the backend contract changes. Keycloak-js handles the auth flow (`login-required` on app init) and an `HttpTokenInterceptor` attaches the Bearer token to every request.
+| Service | Folder | Port | Responsibility |
+|---|---|---|---|
+| Config Server | `config-server/` | `8888` | Centralised configuration (native profile, files in `src/main/resources/config-repo/`) |
+| Discovery Server | `discovery-server/` | `8761` | Eureka service registry |
+| Gateway | `gateway/` | `8088` | Spring Cloud Gateway, single entry point: routes `/api/v1/books/**` to book-service and `/api/v1/feedbacks/**` to feedback-service |
+| Book service | `book-tribe-be/` | `8091` | **Book** and **History** domains: catalogue, borrow/return/approve flow, cover upload |
+| Feedback service | `feedback-service/` | `8082` | Star ratings and reviews, with its own database (`book_tribe_feedback`) |
+| Notification service | `notification-service/` | `8083` | Thymeleaf email templates sent over SMTP (`POST /api/v1/notifications/email`) |
+
+Book service and feedback service call each other through OpenFeign clients protected by Resilience4j circuit breakers and time limiters, with fallbacks when the other service is unavailable. A `BaseEntity` superclass provides JPA auditing fields on every entity.
+
+All authentication is handled externally by Keycloak: book service and feedback service validate JWTs as OAuth2 resource servers and map Keycloak roles to Spring Security authorities via `KeycloakJwtAuthenticationConverter`.
+
+The Angular frontend consumes the API through a fully generated client (`ng-openapi-gen`) that is regenerated from the OpenAPI spec whenever the backend contract changes. Keycloak-js handles the auth flow (`login-required` on app init) and an `HttpTokenInterceptor` attaches the Bearer token to every request.
 
 Architecture diagrams are available in [`diagrams.drawio`](./diagrams.drawio) and rendered screenshots in [`screenshots/`](./screenshots/).
 
@@ -60,19 +74,22 @@ docker compose up -d
 2. **Add realm** → import the JSON files from `keycloak/realm/`
 3. This creates the `book-social-network` realm and the `bsn` client used by the frontend
 
-### 3. Run the backend
+### 3. Run the backend services
+
+Start them in this order, each from its own folder and terminal: Config Server and Discovery Server first, because the others read their configuration and register at startup.
 
 ```bash
-cd book-tribe-be
-
-# Unix
-./mvnw spring-boot:run
-
-# Windows
-mvnw.cmd spring-boot:run
+cd config-server && ./mvnw spring-boot:run          # 8888
+cd discovery-server && ./mvnw spring-boot:run       # 8761
+cd book-tribe-be && ./mvnw spring-boot:run          # 8091
+cd feedback-service && ./mvnw spring-boot:run       # 8082
+cd notification-service && ./mvnw spring-boot:run   # 8083
+cd gateway && ./mvnw spring-boot:run                # 8088
 ```
 
-The API starts on `http://localhost:8088/api/v1/`.
+On Windows use `mvnw.cmd` instead of `./mvnw`. Feedback service needs a `book_tribe_feedback` database next to `book_tribe`.
+
+The API is served through the gateway on `http://localhost:8088/api/v1/`, and the Eureka dashboard is on `http://localhost:8761`.
 
 ### 4. Run the frontend
 
@@ -86,10 +103,11 @@ The app redirects unauthenticated users to Keycloak automatically.
 
 ## API Docs
 
-Interactive Swagger UI is available at:
+Interactive Swagger UI is served by each service on its own port, since the gateway routes only the API paths:
 
 ```
-http://localhost:8088/api/v1/swagger-ui.html
+http://localhost:8091/api/v1/swagger-ui.html   # book service
+http://localhost:8082/api/v1/swagger-ui.html   # feedback service
 ```
 
 To regenerate the Angular API client after a backend change:
