@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import Keycloak from 'keycloak-js';
 import {UserProfile} from './user-profile';
+import {environment} from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +11,7 @@ export class KeycloakService {
 
   get keycloak() {
     if (!this._keycloak) {
-      this._keycloak = new Keycloak({
-        url: 'http://localhost:9090',
-        realm: 'book-social-network',
-        clientId: 'bsn'
-      });
+      this._keycloak = new Keycloak(environment.keycloak);
     }
     return this._keycloak;
   }
@@ -28,6 +25,9 @@ export class KeycloakService {
   async init() {
     const authenticated = await this.keycloak.init({
       onLoad: 'login-required',
+      pkceMethod: 'S256',
+      // The frontend and Keycloak live on different sites, so the session iframe would be blocked
+      checkLoginIframe: false
     });
 
     if (authenticated) {
@@ -41,7 +41,6 @@ export class KeycloakService {
   }
 
   logout() {
-    // this.keycloak.accountManagement();
-    return this.keycloak.logout({redirectUri: 'http://localhost:4200'});
+    return this.keycloak.logout({redirectUri: window.location.origin});
   }
 }

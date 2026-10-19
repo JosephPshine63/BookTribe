@@ -11,3 +11,6 @@ book-tribe-be/uploads/*
 !book-tribe-be/uploads/README.md
 feedback-service/uploads/*
 !feedback-service/uploads/README.md
+
+### Deploy secrets ###
+deploy/.env

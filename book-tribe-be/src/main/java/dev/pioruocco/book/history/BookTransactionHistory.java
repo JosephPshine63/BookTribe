@@ -2,7 +2,6 @@ package dev.pioruocco.book.history;
 
 import dev.pioruocco.book.book.Book;
 import dev.pioruocco.book.common.BaseEntity;
-import dev.pioruocco.book.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -21,7 +20,6 @@ import lombok.experimental.SuperBuilder;
 @Entity
 public class BookTransactionHistory extends BaseEntity {
 
-    // @ManyToOne
     @Column(name = "user_id")
     private String userId;
     @ManyToOne

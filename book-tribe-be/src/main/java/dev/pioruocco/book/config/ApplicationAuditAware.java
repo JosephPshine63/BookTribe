@@ -1,6 +1,5 @@
 package dev.pioruocco.book.config;
 
-import dev.pioruocco.book.user.User;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,8 +17,6 @@ public class ApplicationAuditAware implements AuditorAware<String> {
                 authentication instanceof AnonymousAuthenticationToken) {
             return Optional.empty();
         }
-
-        // User userPrincipal = (User) authentication.getPrincipal();
 
         return Optional.ofNullable(authentication.getName());
     }

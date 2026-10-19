@@ -11,6 +11,8 @@ import { StrictHttpResponse } from '../strict-http-response';
 
 import { findAllFeedbacksByBook } from '../fn/feedback/find-all-feedbacks-by-book';
 import { FindAllFeedbacksByBook$Params } from '../fn/feedback/find-all-feedbacks-by-book';
+import { findAverageRatingByBook } from '../fn/feedback/find-average-rating-by-book';
+import { FindAverageRatingByBook$Params } from '../fn/feedback/find-average-rating-by-book';
 import { PageResponseFeedbackResponse } from '../models/page-response-feedback-response';
 import { saveFeedback } from '../fn/feedback/save-feedback';
 import { SaveFeedback$Params } from '../fn/feedback/save-feedback';
@@ -68,6 +70,31 @@ export class FeedbackService extends BaseService {
   findAllFeedbacksByBook(params: FindAllFeedbacksByBook$Params, context?: HttpContext): Observable<PageResponseFeedbackResponse> {
     return this.findAllFeedbacksByBook$Response(params, context).pipe(
       map((r: StrictHttpResponse<PageResponseFeedbackResponse>): PageResponseFeedbackResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `findAverageRatingByBook()` */
+  static readonly FindAverageRatingByBookPath = '/feedbacks/book/{book-id}/average-rating';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `findAverageRatingByBook()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  findAverageRatingByBook$Response(params: FindAverageRatingByBook$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+    return findAverageRatingByBook(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `findAverageRatingByBook$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  findAverageRatingByBook(params: FindAverageRatingByBook$Params, context?: HttpContext): Observable<number> {
+    return this.findAverageRatingByBook$Response(params, context).pipe(
+      map((r: StrictHttpResponse<number>): number => r.body)
     );
   }
 

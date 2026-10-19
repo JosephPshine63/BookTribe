@@ -8,9 +8,9 @@ spring:
     multipart:
       max-file-size: 50MB
   datasource:
-    url: jdbc:postgresql://localhost:5432/book_tribe
-    username: username
-    password: password
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/book_tribe
+    username: ${DB_USER:username}
+    password: ${DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -25,7 +25,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "http://localhost:9090/realms/book-social-network"
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:9090/realms/book-social-network}
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:9090/realms/book-social-network/protocol/openid-connect/certs}
   cloud:
     openfeign:
       circuitbreaker:
@@ -37,7 +38,7 @@ springdoc:
 application:
   file:
     uploads:
-      photos-output-path: ./uploads
+      photos-output-path: ${UPLOADS_PATH:./uploads}
 
 resilience4j:
   circuitbreaker:

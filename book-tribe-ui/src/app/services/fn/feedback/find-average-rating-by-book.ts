@@ -6,16 +6,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { FeedbackRequest } from '../../models/feedback-request';
 
-export interface SaveFeedback$Params {
-      body: FeedbackRequest
+export interface FindAverageRatingByBook$Params {
+  'book-id': number;
 }
 
-export function saveFeedback(http: HttpClient, rootUrl: string, params: SaveFeedback$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
-  const rb = new RequestBuilder(rootUrl, saveFeedback.PATH, 'post');
+export function findAverageRatingByBook(http: HttpClient, rootUrl: string, params: FindAverageRatingByBook$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
+  const rb = new RequestBuilder(rootUrl, findAverageRatingByBook.PATH, 'get');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.path('book-id', params['book-id'], {});
   }
 
   return http.request(
@@ -28,4 +27,4 @@ export function saveFeedback(http: HttpClient, rootUrl: string, params: SaveFeed
   );
 }
 
-saveFeedback.PATH = '/feedbacks';
+findAverageRatingByBook.PATH = '/feedbacks/book/{book-id}/average-rating';

@@ -114,8 +114,20 @@ To regenerate the Angular API client after a backend change:
 
 ```bash
 cd book-tribe-ui
-npm run api-gen    # reads src/openapi/openapi.json → writes src/app/services/
+npm run openapi:fetch   # merges the book + feedback specs into src/openapi/openapi.json
+npm run api-gen         # reads src/openapi/openapi.json → writes src/app/services/
 ```
+
+`openapi:fetch` needs book-service and feedback-service running locally.
+
+## Deploy
+
+Free setup, no domain required:
+
+- **Frontend** on Vercel (`book-tribe-ui/`, SPA rewrite in `vercel.json`)
+- **Backend + Keycloak** on a home Ubuntu server with `deploy/docker-compose.prod.yml`, exposed over HTTPS with Tailscale Funnel (`https://<host>.ts.net` → gateway, `:8443` → Keycloak)
+
+Step-by-step guide: [deploy/README.md](./deploy/README.md).
 
 ## License
 
