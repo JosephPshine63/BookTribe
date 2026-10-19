@@ -14,8 +14,7 @@ A full-stack book-sharing social network where users can lend, borrow, and revie
 - Publish your own books with cover image upload, toggle shareable / archived status
 - Borrow a book and return it; owner explicitly approves the return
 - Leave a star rating and written feedback on any book you have borrowed
-- Register with email verification via a 6-digit OTP (delivered through MailDev in dev)
-- All authentication and authorisation delegated to Keycloak (JWT / OAuth2)
+- Registration, login and logout handled by Keycloak (JWT / OAuth2, PKCE)
 
 ## Tech Stack
 
@@ -66,7 +65,7 @@ docker compose up -d
 | MailDev  | `http://localhost:1080` | — |
 | Keycloak | `http://localhost:9090` | `admin` / `admin` |
 
-> **DB name note**: `docker-compose.yml` creates the database as `book_social_network`, but `application-dev.yml` connects to `book_tribe`. Either create a `book_tribe` database manually after the container starts, or change the `POSTGRES_DB` value in `docker-compose.yml` to `book_tribe`.
+> **DB name note**: `docker-compose.yml` creates the database as `book_social_network`, but book service connects to `book_tribe` and feedback service to `book_tribe_feedback` (see `config-server/src/main/resources/config-repo/`). Create both databases manually after the container starts.
 
 ### 2. Configure Keycloak
 
