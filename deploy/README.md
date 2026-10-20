@@ -76,7 +76,7 @@ Import the GitHub repo into Vercel with:
 | Framework Preset | Other |
 | Build Command | `npm run build` |
 | Output Directory | `dist/book-network-ui` |
-| Node.js Version | 20.x |
+| Node.js Version | 24.x |
 
 `vercel.json` rewrites every path to `index.html`, so deep links such as `/books/my-books` survive a reload. Each push to the default branch triggers a new deploy.
 
