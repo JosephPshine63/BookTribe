@@ -56,6 +56,8 @@ Keycloak imports `keycloak/realm/book-social-network` on its **first** start onl
 
 The realm export contains test users. Delete them, or change their passwords, from the admin console before sharing the URL.
 
+`SEED_DATA=true` in `.env` loads demo books, loans and feedbacks on start-up, only while the tables are empty. They are owned by those test users: if you delete the users, leave `SEED_DATA=false`.
+
 Update:
 
 ```bash

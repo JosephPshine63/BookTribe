@@ -39,6 +39,8 @@ application:
   file:
     uploads:
       photos-output-path: ${UPLOADS_PATH:./uploads}
+  seed:
+    enabled: ${SEED_DATA:false}
 
 resilience4j:
   circuitbreaker:

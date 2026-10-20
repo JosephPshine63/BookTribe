@@ -32,6 +32,10 @@ spring:
 springdoc:
   default-produces-media-type: application/json
 
+application:
+  seed:
+    enabled: ${SEED_DATA:false}
+
 resilience4j:
   circuitbreaker:
     instances:

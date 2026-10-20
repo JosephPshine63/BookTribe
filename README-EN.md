@@ -90,6 +90,8 @@ On Windows use `mvnw.cmd` instead of `./mvnw`. Feedback service needs a `book_tr
 
 The API is served through the gateway on `http://localhost:8088/api/v1/`, and the Eureka dashboard is on `http://localhost:8761`.
 
+**Demo data:** start book service and feedback service with `SEED_DATA=true` (e.g. `SEED_DATA=true ./mvnw spring-boot:run`) to load 12 books, 8 loans and 6 feedbacks from `src/main/resources/seed/*.sql`. Each table is seeded only while it is empty. The books and loans belong to the test users of the realm export: any logged-in user sees the shareable books in the catalogue.
+
 ### 4. Run the frontend
 
 ```bash

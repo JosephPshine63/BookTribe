@@ -18,6 +18,7 @@ x-spring-env: &spring-env
   DB_PASSWORD: ${POSTGRES_PASSWORD}
   KEYCLOAK_ISSUER_URI: https://${PUBLIC_HOST}:8443/realms/book-social-network
   KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/book-social-network/protocol/openid-connect/certs
+  SEED_DATA: ${SEED_DATA:-false}
 
 services:
   postgres:
