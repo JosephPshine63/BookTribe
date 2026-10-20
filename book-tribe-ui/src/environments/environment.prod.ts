@@ -1,9 +1,9 @@
-// Public URLs of the backend exposed through Tailscale Funnel (see deploy/README.md).
-// Replace booktribe.tailXXXX.ts.net with the server's Funnel hostname.
+// Public URLs of the backend exposed through Tailscale Funnel (see deploy/README.md):
+// gateway on :8443, Keycloak on :10000 (:443 is used by another app on the server).
 export const environment = {
-  apiUrl: 'https://booktribe.tailXXXX.ts.net/api/v1',
+  apiUrl: 'https://gpr-server.tailed5107.ts.net:8443/api/v1',
   keycloak: {
-    url: 'https://booktribe.tailXXXX.ts.net:8443',
+    url: 'https://gpr-server.tailed5107.ts.net:10000',
     realm: 'book-social-network',
     clientId: 'bsn'
   }

@@ -126,7 +126,7 @@ npm run api-gen         # reads src/openapi/openapi.json → writes src/app/serv
 Free setup, no domain required:
 
 - **Frontend** on Vercel (`book-tribe-ui/`, SPA rewrite in `vercel.json`)
-- **Backend + Keycloak** on a home Ubuntu server with `deploy/docker-compose.prod.yml`, exposed over HTTPS with Tailscale Funnel (`https://<host>.ts.net` → gateway, `:8443` → Keycloak)
+- **Backend + Keycloak** on a home Ubuntu server with `deploy/docker-compose.prod.yml`, exposed over HTTPS with Tailscale Funnel (`https://<host>.ts.net:8443` → gateway, `:10000` → Keycloak)
 
 Step-by-step guide: [deploy/README.md](./deploy/README.md).
 

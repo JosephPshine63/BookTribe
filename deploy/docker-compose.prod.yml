@@ -16,7 +16,7 @@ x-spring-env: &spring-env
   DB_HOST: postgres
   DB_USER: ${POSTGRES_USER}
   DB_PASSWORD: ${POSTGRES_PASSWORD}
-  KEYCLOAK_ISSUER_URI: https://${PUBLIC_HOST}:8443/realms/book-social-network
+  KEYCLOAK_ISSUER_URI: https://${PUBLIC_HOST}:10000/realms/book-social-network
   KEYCLOAK_JWK_SET_URI: http://keycloak:8080/realms/book-social-network/protocol/openid-connect/certs
   SEED_DATA: ${SEED_DATA:-false}
 
@@ -49,7 +49,7 @@ services:
       KC_DB_USERNAME: ${POSTGRES_USER}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
       # Public URL served by Tailscale Funnel; tokens are issued with this issuer.
-      KC_HOSTNAME_URL: https://${PUBLIC_HOST}:8443
+      KC_HOSTNAME_URL: https://${PUBLIC_HOST}:10000
       KC_HOSTNAME_STRICT_BACKCHANNEL: "false"
       # TLS is terminated by Tailscale Funnel.
       KC_HTTP_ENABLED: "true"
@@ -58,7 +58,7 @@ services:
     volumes:
       - ../keycloak/realm/book-social-network:/opt/keycloak/data/import/book-social-network.json:ro
     ports:
-      - "127.0.0.1:9090:8080"
+      - "127.0.0.1:9092:8080"
     networks: [booktribe]
     depends_on:
       postgres:
